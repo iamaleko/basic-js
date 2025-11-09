@@ -20,14 +20,30 @@ const { NotImplementedError } = require('../lib');
  *
  */
 class VigenereCipheringMachine {
-  encrypt() {
-    // Remove line below and write your code here
-    throw new NotImplementedError('Not implemented');
+  constructor(direct = true) {
+    this.reverse = !direct;
   }
 
-  decrypt() {
-    // Remove line below and write your code here
-    throw new NotImplementedError('Not implemented');
+  encrypt(str, key, mul = 1) {
+    if (str === undefined || key === undefined)
+      throw new Error("Incorrect arguments!");
+    key = key.toUpperCase().split('').map((char) => char.charCodeAt(0) - 65);
+    let p = -1
+    const arr = str.toUpperCase().split('').map((char) => {
+      let code = char.charCodeAt(0) - 65;
+      if (code < 0 || code > 25) return char;
+      p++;
+      if (p === key.length) p = 0;
+      code += key[p] * mul
+      code = code < 0 ? code + 26 : code % 26;
+      return String.fromCharCode(code + 65);
+    });
+    if (this.reverse) arr.reverse();
+    return arr.join('');
+  }
+
+  decrypt(str, key) {
+    return this.encrypt(str, key, -1);
   }
 }
 
